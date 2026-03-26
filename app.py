@@ -6,7 +6,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "secure123"   # session key
-
+# Ensure notes file exists
+if not os.path.exists("notes.txt"):
+    open("notes.txt", "wb").close()
+    
 # ---------- KEY MANAGEMENT ----------
 def load_key():
     if not os.path.exists("secret.key"):
@@ -94,10 +97,15 @@ def home():
     if os.path.exists("notes.txt"):
         with open("notes.txt", "rb") as f:
             for i, line in enumerate(f):
-                text = decrypt_note(line.strip())
+                try:
+                    text = decrypt_note(line.strip())
 
-                if search_query.lower() in text.lower():
-                    notes.append((i, text))
+                    if search_query.lower() in text.lower():
+                        notes.append((i, text))
+
+                except Exception:
+                    # Skip corrupted or old encrypted notes
+                    continue
 
     return render_template(
         "index.html",
