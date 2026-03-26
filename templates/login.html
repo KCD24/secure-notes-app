@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+
+<style>
+body {
+    background: #020617;
+    font-family: Arial;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.box {
+    background: #111827;
+    padding: 30px;
+    border-radius: 12px;
+    width: 300px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #38bdf8;
+    border: none;
+    font-weight: bold;
+}
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.box {
+    position: relative;
+    z-index: 1;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>🔐 Secure Login</h2>
+
+<form method="POST">
+
+<input name="username" placeholder="Username" required>
+
+<input type="password"
+name="password"
+placeholder="Password"
+required>
+
+<button>Login</button>
+
+</form>
+
+{% if error %}
+<p style="color:red;">
+{{ error }}
+</p>
+{% endif %}
+
+</div>
+<script type="module">
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
+
+<script>
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+);
+
+const renderer = new THREE.WebGLRenderer({
+    alpha: true
+});
+
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+document.body.appendChild(renderer.domElement);
+
+camera.position.z = 5;
+
+const light = new THREE.AmbientLight(0xffffff, 1);
+scene.add(light);
+
+const loader = new THREE.GLTFLoader();
+
+loader.load(
+    "/static/lanyard/card.glb",
+
+    function (gltf) {
+
+        console.log("Model loaded");
+
+        const model = gltf.scene;
+
+        model.scale.set(2, 2, 2);
+
+        scene.add(model);
+
+    },
+
+    undefined,
+
+    function (error) {
+
+        console.error("Error loading model:", error);
+
+    }
+);
+
+function animate() {
+
+    requestAnimationFrame(animate);
+
+    scene.rotation.y += 0.005;
+
+    renderer.render(scene, camera);
+
+}
+
+animate();
+
+
+</script>
+</body>
+</html>
